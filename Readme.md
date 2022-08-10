@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Sergey Zamaletdinov](https://up.htmlacademy.ru/ecmascript/18/user/192229).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Рябинин](https://up.htmlacademy.ru/ecmascript/18/user/63289.
 
 ---
 
