@@ -10,8 +10,8 @@ const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.header');
 
 render(new UserProfile(), siteHeaderElement);
-// render(new Filter(), siteMainElement);
-// render(new Sort(), siteMainElement);
+render(new Filter(), siteMainElement);
+render(new Sort(), siteMainElement);
 
 
 // render(new Sort(), siteMainElement);
