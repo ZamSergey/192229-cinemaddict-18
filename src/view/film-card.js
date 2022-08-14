@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 
-const createFilmCardTemplate = () => {
+const createFilmCardTemplate = () =>
   `<article class="film-card">
           <a class="film-card__link">
             <h3 class="film-card__title">The Dance of Life</h3>
@@ -20,7 +20,7 @@ const createFilmCardTemplate = () => {
             <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
           </div>
         </article>`
-};
+;
 
 export default class FilmCard {
   getTemplate() {

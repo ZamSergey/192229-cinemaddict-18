@@ -1,7 +1,7 @@
 import {createElement} from '../render.js';
 
-const createFilmDetailsTemplate = () => {
- return  `<section class="film-details">
+const createPopUpTemplate = () =>
+  `<section class="film-details">
   <div class="film-details__inner">
     <div class="film-details__top-container">
       <div class="film-details__close">
@@ -165,11 +165,11 @@ const createFilmDetailsTemplate = () => {
     </div>
   </div>
 </section>`
-};
+;
 
-export default class FilmDetails {
+export default class PopUp {
   getTemplate() {
-    return createFilmDetailsTemplate();
+    return createPopUpTemplate();
   }
 
   getElement() {
@@ -184,3 +184,5 @@ export default class FilmDetails {
     this.element = null;
   }
 }
+
+
