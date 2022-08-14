@@ -1,7 +1,7 @@
 import UserProfile from './view/user-profile.js';
 import Filter from './view/filters.js';
 import Sort from './view/sort.js';
-import PopUp from './view/pop-up.js';
+import FilmDetailsPopUp from './view/film-details-pop-up.js';
 import FilmMainPresenter from '../presenter/film-main-presenter.js';
 
 
@@ -16,6 +16,6 @@ const filmMainPresenter = new FilmMainPresenter();
 render(new UserProfile(),siteHeaderElement);
 render(new Filter(), siteMainElement);
 render(new Sort(), siteMainElement);
-render(new PopUp(), siteBodyElement);
+render(new FilmDetailsPopUp(), siteBodyElement);
 
-filmMainPresenter.init(siteMainElement)
+filmMainPresenter.init(siteMainElement);

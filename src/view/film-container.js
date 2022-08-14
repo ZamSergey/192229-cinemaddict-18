@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 
-const createFilmContainerTemplate = () =>  ` <section class="films"></section>`;
+const createFilmContainerTemplate = () => '<section class="films"></section>';
 
 export default class FilmContainer {
   getTemplate() {
@@ -19,7 +19,3 @@ export default class FilmContainer {
     this.element = null;
   }
 }
-
-
-
-
