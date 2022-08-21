@@ -4,7 +4,7 @@ export const generateFilm = () => {
   return {
     "id": "0",
     "comments": [
-      "CommentsObject_1", "CommentsObject_2"
+     1, 2, 3
     ],
     "film_info": {
       "title": "A Little Pony Without The Carpet",
@@ -25,13 +25,13 @@ export const generateFilm = () => {
       },
       "runtime": 77,
       "genre": [
-        "Comedy"
+        "Comedy", "Comedy", "Comedy"
       ],
       "description": "Oscar-winning film, a war drama about two young people, from the creators of timeless classic \"Nu, Pogodi!\" and \"Alice in Wonderland\", with the best fight scenes since Bruce Lee."
     },
     "user_details": {
-      "watchlist": false,
-      "already_watched": false,
+      "watchlist": true,
+      "already_watched": true,
       "watching_date": "2019-04-12T16:12:32.554Z",
       "favorite": false
     }

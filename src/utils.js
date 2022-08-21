@@ -10,6 +10,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const humanizeFilmDate = (dueDate) => dayjs(dueDate).format('YYYY');
+const getCommentDate = (dueDate) => dayjs(dueDate).format('YYYY/MM/DD HH:mm');
 const filmRuntime = (minutes) => `${(minutes - (minutes % 60)) / 60}h ${(minutes % 60)}mm`;
 
-export {getRandomInteger, humanizeFilmDate, filmRuntime};
+export {getRandomInteger, humanizeFilmDate, filmRuntime, getCommentDate};

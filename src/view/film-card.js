@@ -8,7 +8,7 @@ const createFilmCardTemplate = (filmsData) => {
   const filmDuration = filmRuntime(runtime)
 
   const year = humanizeFilmDate(release.date);
-console.log(filmComment.length);
+
   return `<article class="film-card">
           <a class="film-card__link">
             <h3 class="film-card__title">${title}</h3>

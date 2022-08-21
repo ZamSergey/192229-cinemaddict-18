@@ -9,9 +9,10 @@ import FilmDetailModel from './model/films-detail-model.js';
 
 import {render} from './render.js';
 
-const siteHeaderElement = document.querySelector('.header');
-const siteMainElement = document.querySelector('.main');
+
+
 const siteBodyElement = document.querySelector('body');
+const siteHeaderElement = siteBodyElement.querySelector('.header');
 // siteBodyElement.classList.add('film-details');
 const filmMainPresenter = new FilmMainPresenter();
 const filmDetailPresenter = new FilmDetailPresenter();
@@ -21,5 +22,5 @@ const filmDetailModel = new FilmDetailModel();
 render(new UserProfile(),siteHeaderElement);
 // render(new FilmDetailsPopUp(), siteBodyElement);
 
-filmMainPresenter.init(siteMainElement, filmsModel);
+filmMainPresenter.init(siteBodyElement, filmsModel);
 filmDetailPresenter.init(siteBodyElement, filmDetailModel);

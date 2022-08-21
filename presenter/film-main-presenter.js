@@ -16,8 +16,9 @@ export default class FilmMainPresenter {
   filmSortComponent = new Sort();
 
   init = (filmMainContainer, filmsModel) => {
-    this.filmMainContainer = filmMainContainer;
-    this.filmsModel = filmsModel
+
+    this.filmMainContainer = filmMainContainer.querySelector('.main');
+    this.filmsModel = filmsModel;
     this.filmsList = [... this.filmsModel.getFilms()];
 
     //Отрисовка крупных блоков

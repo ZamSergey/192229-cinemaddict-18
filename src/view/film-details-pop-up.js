@@ -1,12 +1,29 @@
 import {createElement} from '../render.js';
 import {humanizeFilmDate, filmRuntime} from '../utils.js';
 
+const setGenre = (genre) => {
+
+  let genreList = '';
+  for(let genr of genre) {
+    genreList += `<span class="film-details__genre">${genr}</span>`
+  }
+
+  return genreList;
+}
+
+const isUserDetailsA = (userDetails) => {
+
+}
+
 const createPopUpTemplate = (film) => {
-  console.log(film);
 
   const {title, alternative_title, total_rating, poster, age_rating, director, writers, actors, release, runtime, genre, description} = film.film_info;
   const filmWriters = writers.join(', ');
   const filmActors = actors.join(', ');
+  const isWatchlist = film.user_details.watchlist;
+  const isWatched = film.user_details.already_watched;
+  const isFavorite = film.user_details.favorite;
+  const commentCounter = film.comments ? film.comments.length: 0;
 
   return `<section class="film-details">
   <div class="film-details__inner">
@@ -61,9 +78,8 @@ const createPopUpTemplate = (film) => {
             <tr class="film-details__row">
               <td class="film-details__term">Genres</td>
               <td class="film-details__cell">
-                <span class="film-details__genre">Drama</span>
-                <span class="film-details__genre">Film-Noir</span>
-                <span class="film-details__genre">Mystery</span></td>
+                ${setGenre(genre)}
+              </td>
             </tr>
           </table>
 
@@ -74,69 +90,18 @@ const createPopUpTemplate = (film) => {
       </div>
 
       <section class="film-details__controls">
-        <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-        <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-        <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+        <button type="button" class="film-details__control-button ${isWatchlist ? 'film-details__control-button--active': ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+        <button type="button" class="film-details__control-button ${isWatched ? 'film-details__control-button--active': ''} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+        <button type="button" class="film-details__control-button ${isFavorite ? 'film-details__control-button--active': ''} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
       </section>
     </div>
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentCounter}</span></h3>
 
         <ul class="film-details__comments-list">
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-            </span>
-            <div>
-              <p class="film-details__comment-text">Interesting setting and a good cast</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">Tim Macoveev</span>
-                <span class="film-details__comment-day">2019/12/31 23:59</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji-sleeping">
-            </span>
-            <div>
-              <p class="film-details__comment-text">Booooooooooring</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">John Doe</span>
-                <span class="film-details__comment-day">2 days ago</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/puke.png" width="55" height="55" alt="emoji-puke">
-            </span>
-            <div>
-              <p class="film-details__comment-text">Very very old. Meh</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">John Doe</span>
-                <span class="film-details__comment-day">2 days ago</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/angry.png" width="55" height="55" alt="emoji-angry">
-            </span>
-            <div>
-              <p class="film-details__comment-text">Almost two hours? Seriously?</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">John Doe</span>
-                <span class="film-details__comment-day">Today</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>
+
         </ul>
 
         <form class="film-details__new-comment" action="" method="get">
