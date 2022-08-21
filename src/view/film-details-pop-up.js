@@ -4,26 +4,25 @@ import {humanizeFilmDate, filmRuntime} from '../utils.js';
 const setGenre = (genre) => {
 
   let genreList = '';
-  for(let genr of genre) {
-    genreList += `<span class="film-details__genre">${genr}</span>`
+  for(const genr of genre) {
+    genreList += `<span class="film-details__genre">${genr}</span>`;
   }
 
   return genreList;
-}
-
-const isUserDetailsA = (userDetails) => {
-
-}
+};
 
 const createPopUpTemplate = (film) => {
 
-  const {title, alternative_title, total_rating, poster, age_rating, director, writers, actors, release, runtime, genre, description} = film.film_info;
+  const {title, poster, director, writers, actors, release, runtime, genre, description} = film.film_info;
+  const alternativeTitle = film.film_info.alternative_title;
+  const totalRating = film.film_info.total_rating;
+  const ageRating = film.film_info.age_rating;
   const filmWriters = writers.join(', ');
   const filmActors = actors.join(', ');
   const isWatchlist = film.user_details.watchlist;
   const isWatched = film.user_details.already_watched;
   const isFavorite = film.user_details.favorite;
-  const commentCounter = film.comments ? film.comments.length: 0;
+  const commentCounter = film.comments ? film.comments.length : 0;
 
   return `<section class="film-details">
   <div class="film-details__inner">
@@ -35,18 +34,18 @@ const createPopUpTemplate = (film) => {
         <div class="film-details__poster">
           <img class="film-details__poster-img" src="./${poster}" alt="${title}">
 
-          <p class="film-details__age">${age_rating}</p>
+          <p class="film-details__age">${ageRating}</p>
         </div>
 
         <div class="film-details__info">
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
-              <h3 class="film-details__title">${alternative_title}</h3>
+              <h3 class="film-details__title">${alternativeTitle}</h3>
               <p class="film-details__title-original">Original: ${title}</p>
             </div>
 
             <div class="film-details__rating">
-              <p class="film-details__total-rating">${total_rating}</p>
+              <p class="film-details__total-rating">${totalRating}</p>
             </div>
           </div>
 
@@ -90,9 +89,9 @@ const createPopUpTemplate = (film) => {
       </div>
 
       <section class="film-details__controls">
-        <button type="button" class="film-details__control-button ${isWatchlist ? 'film-details__control-button--active': ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-        <button type="button" class="film-details__control-button ${isWatched ? 'film-details__control-button--active': ''} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-        <button type="button" class="film-details__control-button ${isFavorite ? 'film-details__control-button--active': ''} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+        <button type="button" class="film-details__control-button ${isWatchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+        <button type="button" class="film-details__control-button ${isWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+        <button type="button" class="film-details__control-button ${isFavorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
       </section>
     </div>
 
@@ -137,7 +136,7 @@ const createPopUpTemplate = (film) => {
     </div>
   </div>
 </section>`;
-}
+};
 
 
 export default class FilmDetailsPopUp {

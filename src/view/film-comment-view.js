@@ -1,6 +1,6 @@
-import {createElement} from "../render";
+import {createElement} from '../render';
 import {getCommentDate} from '../utils.js';
-import {EMOTYON} from "../mock/const.js";
+import {EMOTYON} from '../mock/const.js';
 
 const createCommentTemplate = (commentData) => {
   const {author, comment, date, emotion} = commentData;
@@ -17,8 +17,8 @@ const createCommentTemplate = (commentData) => {
 <button class="film-details__comment-delete">Delete</button>
   </p>
   </div>
-  </li>`
-}
+  </li>`;
+};
 
 export default class FilmComment {
   constructor(film) {
