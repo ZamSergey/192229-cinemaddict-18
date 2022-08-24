@@ -4,21 +4,26 @@ import FilmComment from '../src/view/film-comment-view.js';
 import CommentsModel from '../src/model/comments-model.js';
 
 export default class FilmDetailPresenter {
+  #siteBodyElement = null;
+  #filmsDetailModel = null;
+  #filmCommentModel = new CommentsModel();
 
   init = (siteBodyElement, filmsModel) => {
 
-    this.siteBodyElement = siteBodyElement;
-    this.filmsDetailModel = filmsModel;
-    this.filmDetail = filmsModel.getFilm();
-    this.filmCommentData = new CommentsModel(this.filmDetail.comments);
+    this.#siteBodyElement = siteBodyElement;
+    this.#filmsDetailModel = filmsModel;
 
-    this.comments = this.filmCommentData.getComments(this.filmDetail.comments);
+    const filmDetailsElement = new FilmDetailsPopUp(this.#filmsDetailModel.films);
+    render(filmDetailsElement,  this.#siteBodyElement);
+    filmDetailsElement.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
 
-    render(new FilmDetailsPopUp(this.filmDetail), siteBodyElement);
+      this.#siteBodyElement.removeChild(filmDetailsElement.element);
+    });
+
     //Находим в отрисованном элементе контейнер для комментариев
     const commentContainer = siteBodyElement.querySelector('.film-details__comments-list');
 
-    for(let comment of this.comments) {
+    for(let comment of  this.#filmCommentModel.comments) {
       render(new FilmComment(comment), commentContainer)
     }
 

@@ -1,5 +1,5 @@
-export const generateComment = (idArray) => {
-  const commentData = [
+export const generateComment = () => {
+  return [
     { id: '1',
       author: 'Ilya O\'Reilly1',
       comment: 'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
@@ -20,15 +20,4 @@ export const generateComment = (idArray) => {
       emotion: 'smile'
     },
   ];
-
-  const tmpArr = commentData.filter((it) => {
-    for(const elem of idArray)
-    {
-      if (Number(it.id) === Number(elem)) {
-        return true;
-      }
-    }
-  });
-
-  return tmpArr;
 };
