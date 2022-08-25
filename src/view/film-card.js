@@ -34,7 +34,6 @@ const createFilmCardTemplate = (filmsData) => {
 export default class FilmCard {
   #element = null;
   #filmData = null;
-  #filmLink = null;
 
   constructor(filmData) {
     this.#filmData = filmData;
@@ -46,16 +45,10 @@ export default class FilmCard {
 
   get element() {
     if (!this.#element) {
-      this.#element =  createElement(this.template);
+      this.#element = createElement(this.template);
     }
     return this.#element;
   }
-
-  get filmData() {
-    return this.#filmData;
-  }
-
-
 
   removeElement() {
     this.#element = null;

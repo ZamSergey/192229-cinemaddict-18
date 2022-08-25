@@ -6,4 +6,4 @@ export default class FilmDetailModel {
   get films () {
     return this.#films;
   }
-};
+}

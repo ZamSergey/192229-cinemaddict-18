@@ -142,6 +142,7 @@ const createPopUpTemplate = (film) => {
 export default class FilmDetailsPopUp {
   #element = null;
   #film = null;
+  #eventListener = null;
 
   constructor(film) {
     this.#film = film;
@@ -157,6 +158,14 @@ export default class FilmDetailsPopUp {
     }
 
     return this.#element;
+  }
+
+  setCloseEvent(handler) {
+    if (!this.#eventListener) {
+      this.#element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+        handler(this.#element);
+      });
+    }
   }
 
   removeElement() {

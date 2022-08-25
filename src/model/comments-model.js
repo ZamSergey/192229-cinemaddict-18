@@ -6,4 +6,4 @@ export default class CommentsModel {
   get comments () {
     return this.#comments;
   }
-};
+}
