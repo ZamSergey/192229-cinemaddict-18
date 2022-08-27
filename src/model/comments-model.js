@@ -1,9 +1,9 @@
 import {generateComment} from '../mock/comment.js';
 
 export default class CommentsModel {
-  constructor(idArray) {
-    this.idArray = idArray;
-  }
+  #comments = generateComment();
 
-  getComments = () => generateComment(this.idArray);
+  get comments () {
+    return this.#comments;
+  }
 }

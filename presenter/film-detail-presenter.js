@@ -4,23 +4,63 @@ import FilmComment from '../src/view/film-comment-view.js';
 import CommentsModel from '../src/model/comments-model.js';
 
 export default class FilmDetailPresenter {
+  #siteBodyElement = null;
+  #filmsDetailModel = null;
+  #filmDetailElement = null;
+  #filmCommentModel = new CommentsModel();
 
   init = (siteBodyElement, filmsModel) => {
 
-    this.siteBodyElement = siteBodyElement;
-    this.filmsDetailModel = filmsModel;
-    this.filmDetail = filmsModel.getFilm();
-    this.filmCommentData = new CommentsModel(this.filmDetail.comments);
+    this.#siteBodyElement = siteBodyElement;
+    this.#filmsDetailModel = filmsModel;
 
-    this.comments = this.filmCommentData.getComments(this.filmDetail.comments);
 
-    render(new FilmDetailsPopUp(this.filmDetail), siteBodyElement);
+
+    this.#renderDetailPopUp(this.#filmsDetailModel.films);
+    this.#renderComments(this.#filmCommentModel.comments);
+  };
+
+  #renderDetailPopUp (filmData) {
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        this.#removeDatailPopUp(this.#filmDetailElement.element);
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    this.#filmDetailElement = new FilmDetailsPopUp(filmData);
+    this.#siteBodyElement.classList.add('hide-overflow');
+
+    render(this.#filmDetailElement,  this.#siteBodyElement);
+
+    this.#filmDetailElement.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+      this.#removeDatailPopUp(this.#filmDetailElement.element);
+
+    });
+    document.addEventListener('keydown', onEscKeyDown);
+
+
+    // filmDetailElement.element.querySelector('.film-details__close-btn').addEventListener('click', () => {    });
+  }
+
+  #removeDatailPopUp (element) {
+    this.#siteBodyElement.removeChild(element);
+    this.#siteBodyElement.classList.remove('hide-overflow');
+  }
+
+  #renderComments (comments) {
     //Находим в отрисованном элементе контейнер для комментариев
-    const commentContainer = siteBodyElement.querySelector('.film-details__comments-list');
+    const commentContainer = this.#siteBodyElement.querySelector('.film-details__comments-list');
 
-    for(let comment of this.comments) {
+    for(let comment of  comments) {
       render(new FilmComment(comment), commentContainer)
     }
+  }
 
-  };
+
+
+
+
 }
