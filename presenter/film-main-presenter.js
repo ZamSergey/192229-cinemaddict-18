@@ -48,26 +48,9 @@ export default class FilmMainPresenter {
 
 
     if (this.#filmsList.length == 0) {
-      render(this.#filmComponent, this.#filmMainContainer);
-      render(this.#filmListComponent,this.#filmComponent.element);
-      render(new FilmListEmpty(), this.#filmListComponent.element);
+      this.#renderNoFilms();
     } else {
-      render(this.#filmSortComponent, this.#filmMainContainer);
-      render(this.#filmComponent, this.#filmMainContainer);
-      render(this.#filmListComponent,this.#filmComponent.element);
-      render(this.#filmListContainerComponent,this.#filmListComponent.element);
-      //Отрисовка контейнера для карточек фильмов
-      render(this.#filmListContainerComponent,this.#filmListComponent.element);
-
-      for (let i = 0; i < Math.min(this.#filmsList.length, FILM_COUNT_PER_STEP); i++) {
-        this.#renderFilm(this.#filmsList[i]);
-      }
-
-
-      if (this.#filmsList.length > FILM_COUNT_PER_STEP) {
-        this.#renderButtonShowMore();
-        this.#buttonShowMoreComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
-      }
+      this.#renderFilmList()
     }
 
   };
@@ -83,6 +66,25 @@ export default class FilmMainPresenter {
     });
   }
 
+  #renderFilmList = () => {
+    render(this.#filmSortComponent, this.#filmMainContainer);
+    render(this.#filmComponent, this.#filmMainContainer);
+    render(this.#filmListComponent,this.#filmComponent.element);
+    render(this.#filmListContainerComponent,this.#filmListComponent.element);
+    //Отрисовка контейнера для карточек фильмов
+    render(this.#filmListContainerComponent,this.#filmListComponent.element);
+
+    for (let i = 0; i < Math.min(this.#filmsList.length, FILM_COUNT_PER_STEP); i++) {
+      this.#renderFilm(this.#filmsList[i]);
+    }
+
+
+    if (this.#filmsList.length > FILM_COUNT_PER_STEP) {
+      this.#renderButtonShowMore();
+      this.#buttonShowMoreComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
+    }
+  }
+
   #showDetailFilm = (filmData) => {
     this.#filmDetailPresenter.init(this.#filmBodyContainer, filmData);
   }
@@ -90,6 +92,12 @@ export default class FilmMainPresenter {
   #renderButtonShowMore = () => {
     this.#buttonShowMoreComponent = new ButtonShowMore();
     render(this.#buttonShowMoreComponent, this.#filmListComponent.element);
+  }
+
+  #renderNoFilms = () => {
+    render(this.#filmComponent, this.#filmMainContainer);
+    render(this.#filmListComponent,this.#filmComponent.element);
+    render(new FilmListEmpty(), this.#filmListComponent.element);
   }
 
   #handleLoadMoreButtonClick = (evt) => {
@@ -105,6 +113,8 @@ export default class FilmMainPresenter {
       this.#buttonShowMoreComponent.removeElement();
     }
   };
+
+
 
 
 }
