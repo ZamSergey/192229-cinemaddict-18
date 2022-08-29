@@ -1,4 +1,4 @@
-import {render} from '../src/render';
+import {render} from '../src/framework/render.js';
 import FilmDetailsPopUp from '../src/view/film-details-pop-up.js';
 import FilmComment from '../src/view/film-comment-view.js';
 import CommentsModel from '../src/model/comments-model.js';
@@ -13,8 +13,6 @@ export default class FilmDetailPresenter {
 
     this.#siteBodyElement = siteBodyElement;
     this.#filmsDetailModel = filmsModel;
-
-
 
     this.#renderDetailPopUp(this.#filmsDetailModel.films);
     this.#renderComments(this.#filmCommentModel.comments);
@@ -35,19 +33,18 @@ export default class FilmDetailPresenter {
 
     render(this.#filmDetailElement,  this.#siteBodyElement);
 
-    this.#filmDetailElement.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-      this.#removeDatailPopUp(this.#filmDetailElement.element);
-
+    this.#filmDetailElement.setCloseClickHandler(() => {
+      this.#removeDatailPopUp();
+      document.removeEventListener('keydown', onEscKeyDown);
     });
+
     document.addEventListener('keydown', onEscKeyDown);
-
-
-    // filmDetailElement.element.querySelector('.film-details__close-btn').addEventListener('click', () => {    });
   }
 
-  #removeDatailPopUp (element) {
-    this.#siteBodyElement.removeChild(element);
+  #removeDatailPopUp = () => {
+    this.#siteBodyElement.removeChild(this.#filmDetailElement.element);
     this.#siteBodyElement.classList.remove('hide-overflow');
+
   }
 
   #renderComments (comments) {

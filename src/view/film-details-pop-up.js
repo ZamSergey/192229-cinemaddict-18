@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
-import {humanizeFilmDate, filmRuntime} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {humanizeFilmDate, filmRuntime} from '../utils/date.js';
 
 const setGenre = (genre) => {
 
@@ -139,12 +139,12 @@ const createPopUpTemplate = (film) => {
 };
 
 
-export default class FilmDetailsPopUp {
-  #element = null;
+export default class FilmDetailsPopUp extends AbstractView {
   #film = null;
   #eventListener = null;
 
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -152,25 +152,24 @@ export default class FilmDetailsPopUp {
     return createPopUpTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setCloseClickHandler = (callback) => {
+    // Мы могли бы сразу передать callback в addEventListener,
+    // но тогда бы для удаления обработчика в будущем,
+    // нам нужно было бы производить это снаружи, где-то там,
+    // где мы вызывали setClickHandler, что не всегда удобно
 
-    return this.#element;
-  }
+    // 1. Поэтому колбэк мы запишем во внутреннее свойство
+    this._callback.closeClick = callback;
+    // 2. В addEventListener передадим абстрактный обработчик
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
+  };
 
-  setCloseEvent(handler) {
-    if (!this.#eventListener) {
-      this.#element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-        handler(this.#element);
-      });
-    }
-  }
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    // 3. А внутри абстрактного обработчика вызовем колбэк
+    this._callback.closeClick();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
 }
 
 

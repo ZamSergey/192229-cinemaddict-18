@@ -4,11 +4,12 @@ import ButtonShowMore from '../src/view/button-show-more.js';
 import FilmListEmpty from '../src/view/list-empty-view';
 import FilmContainer from '../src/view/film-container.js';
 import FilmCard from '../src/view/film-card.js';
-import {render} from '../src/render';
-import Filter from "../src/view/filters";
-import Sort from "../src/view/sort";
-import FilmDetailPresenter from "./film-detail-presenter";
+import {render} from '../src/framework/render.js';
+import Filter from '../src/view/filters';
+import Sort from '../src/view/sort';
+import FilmDetailPresenter from './film-detail-presenter';
 import FilmDetailModel from "../src/model/films-detail-model";
+import {generateFilter} from '../src/mock/filter'
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -20,7 +21,7 @@ export default class FilmMainPresenter {
   #filmComponent = new FilmContainer();
   #filmListComponent = new FilmList();
   #filmListContainerComponent = new FilmListContainer();
-  #filmFilterComponent = new Filter();
+  #filmFilterComponent = null;
   #filmSortComponent = new Sort();
   #filmListEmptyComponent = new FilmListEmpty();
   #buttonShowMoreComponent = null;
@@ -44,7 +45,12 @@ export default class FilmMainPresenter {
     this.#filmsList = [... this.#filmsModel.films];
 
     //Навигация(Филтры)
+    const filterData = generateFilter(this.#filmsList);
+
+    this.#filmFilterComponent = new Filter(filterData);
+
     render(this.#filmFilterComponent, this.#filmMainContainer);
+    console.log(this.#filmFilterComponent.element)
 
 
     if (this.#filmsList.length == 0) {
