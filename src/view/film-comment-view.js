@@ -1,5 +1,5 @@
-import {createElement} from '../render';
-import {getCommentDate} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {getCommentDate} from '../utils/date.js';
 import {EMOTYON} from '../mock/const.js';
 
 const createCommentTemplate = (commentData) => {
@@ -20,27 +20,15 @@ const createCommentTemplate = (commentData) => {
   </li>`;
 };
 
-export default class FilmComment {
-  #element = null;
+export default class FilmComment extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
   }
 
   get template() {
     return createCommentTemplate(this.#film);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

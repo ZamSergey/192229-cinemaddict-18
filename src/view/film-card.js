@@ -1,10 +1,13 @@
-import {createElement} from '../render.js';
-import {humanizeFilmDate, filmRuntime} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {humanizeFilmDate, filmRuntime} from '../utils/date.js';
 
 const createFilmCardTemplate = (filmsData) => {
   const filmInfo = filmsData['film_info'];
   const filmComment = filmsData['comments'];
+  const userDetails = filmsData['user_details'];
   const {title, release, runtime, description, genre, poster} = filmInfo;
+  const {watchlist, favorite} = userDetails;
+  const alreadyWatched = userDetails['already_watched'];
   const totalRating = filmInfo.total_rating;
   const alternativeTitle = filmInfo.alternative_title;
   const filmDuration = filmRuntime(runtime);
@@ -25,17 +28,18 @@ const createFilmCardTemplate = (filmsData) => {
             <span class="film-card__comments">${filmComment.length} comments</span>
           </a>
           <div class="film-card__controls">
-            <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-            <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-            <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+            <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${ watchlist ? 'film-card__controls-item--active' : ''}" type="button">Add to watchlist</button>
+            <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${ alreadyWatched ? 'film-card__controls-item--active' : ''}" type="button">Mark as watched</button>
+            <button class="film-card__controls-item film-card__controls-item--favorite ${ favorite ? 'film-card__controls-item--active' : ''}" type="button">Mark as favorite</button>
           </div>
         </article>`;
 };
-export default class FilmCard {
-  #element = null;
+
+export default class FilmCard extends AbstractView {
   #filmData = null;
 
   constructor(filmData) {
+    super();
     this.#filmData = filmData;
   }
 
@@ -43,14 +47,23 @@ export default class FilmCard {
     return createFilmCardTemplate(this.#filmData);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setClickHandler = (callback) => {
+    // Мы могли бы сразу передать callback в addEventListener,
+    // но тогда бы для удаления обработчика в будущем,
+    // нам нужно было бы производить это снаружи, где-то там,
+    // где мы вызывали setClickHandler, что не всегда удобно
 
-  removeElement() {
-    this.#element = null;
-  }
+    // 1. Поэтому колбэк мы запишем во внутреннее свойство
+    this._callback.click = callback;
+    // 2. В addEventListener передадим абстрактный обработчик
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#clickHandler);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    // 3. А внутри абстрактного обработчика вызовем колбэк
+    this._callback.click();
+  };
+
+
 }
