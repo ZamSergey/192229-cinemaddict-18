@@ -50,7 +50,6 @@ export default class FilmMainPresenter {
     this.#filmFilterComponent = new Filter(filterData);
 
     render(this.#filmFilterComponent, this.#filmMainContainer);
-    console.log(this.#filmFilterComponent.element)
 
 
     if (this.#filmsList.length == 0) {
