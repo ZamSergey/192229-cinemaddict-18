@@ -8,6 +8,7 @@ import {render} from '../src/framework/render.js';
 import Filter from '../src/view/filters';
 import Sort from '../src/view/sort';
 import FilmDetailPresenter from './film-detail-presenter';
+import FilmPresenter from './film-presenter';
 import FilmDetailModel from "../src/model/films-detail-model";
 import {generateFilter} from '../src/mock/filter'
 
@@ -15,15 +16,11 @@ const FILM_COUNT_PER_STEP = 5;
 
 export default class FilmMainPresenter {
 
-  #filmDetailPresenter = new FilmDetailPresenter();
-  #filmDetailModel = new FilmDetailModel();
-
   #filmComponent = new FilmContainer();
   #filmListComponent = new FilmList();
   #filmListContainerComponent = new FilmListContainer();
   #filmFilterComponent = null;
   #filmSortComponent = new Sort();
-  #filmListEmptyComponent = new FilmListEmpty();
   #buttonShowMoreComponent = null;
 
   #filmMainContainer = null;
@@ -34,8 +31,6 @@ export default class FilmMainPresenter {
 
   constructor(filmMainContainer, filmsModel) {
     this.#filmBodyContainer = filmMainContainer;
-
-
     this.#filmMainContainer = filmMainContainer.querySelector('.main');
     this.#filmsModel = filmsModel;
   }
@@ -48,6 +43,7 @@ export default class FilmMainPresenter {
     const filterData = generateFilter(this.#filmsList);
 
     this.#filmFilterComponent = new Filter(filterData);
+
 
     render(this.#filmFilterComponent, this.#filmMainContainer);
 
@@ -62,13 +58,8 @@ export default class FilmMainPresenter {
 
   #renderFilm = (filmData) => {
 
-    const film = new FilmCard(filmData);
-    render(film, this.#filmListContainerComponent.element);
-    //Установка обработчика клика по фильму и показ подробной информации
-    film.element.querySelector('.film-card__link').addEventListener('click', () => {
-      this.#showDetailFilm(this.#filmDetailModel);
-
-    });
+    const film = new FilmPresenter(this.#filmListContainerComponent.element);
+    film.init(filmData);
   }
 
   #renderFilmList = () => {
@@ -77,7 +68,7 @@ export default class FilmMainPresenter {
     render(this.#filmListComponent,this.#filmComponent.element);
     render(this.#filmListContainerComponent,this.#filmListComponent.element);
     //Отрисовка контейнера для карточек фильмов
-    render(this.#filmListContainerComponent,this.#filmListComponent.element);
+    // render(this.#filmListContainerComponent,this.#filmListComponent.element);
 
     for (let i = 0; i < Math.min(this.#filmsList.length, FILM_COUNT_PER_STEP); i++) {
       this.#renderFilm(this.#filmsList[i]);
@@ -88,10 +79,6 @@ export default class FilmMainPresenter {
       this.#renderButtonShowMore();
       this.#buttonShowMoreComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
     }
-  }
-
-  #showDetailFilm = (filmData) => {
-    this.#filmDetailPresenter.init(this.#filmBodyContainer, filmData);
   }
 
   #renderButtonShowMore = () => {
@@ -118,8 +105,5 @@ export default class FilmMainPresenter {
       this.#buttonShowMoreComponent.removeElement();
     }
   };
-
-
-
 
 }

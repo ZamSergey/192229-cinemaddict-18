@@ -5,16 +5,16 @@ import CommentsModel from '../src/model/comments-model.js';
 
 export default class FilmDetailPresenter {
   #siteBodyElement = null;
-  #filmsDetailModel = null;
+  #filmData = null;
   #filmDetailElement = null;
   #filmCommentModel = new CommentsModel();
 
-  init = (siteBodyElement, filmsModel) => {
+  init = (filmData) => {
 
-    this.#siteBodyElement = siteBodyElement;
-    this.#filmsDetailModel = filmsModel;
+    this.#siteBodyElement = document.querySelector('body');
+    this.#filmData = filmData;
 
-    this.#renderDetailPopUp(this.#filmsDetailModel.films);
+    this.#renderDetailPopUp(filmData);
     this.#renderComments(this.#filmCommentModel.comments);
   };
 
@@ -55,9 +55,4 @@ export default class FilmDetailPresenter {
       render(new FilmComment(comment), commentContainer)
     }
   }
-
-
-
-
-
 }
