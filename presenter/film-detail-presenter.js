@@ -1,4 +1,4 @@
-import {render} from '../src/framework/render.js';
+import {render, remove} from '../src/framework/render.js';
 import FilmDetailsPopUp from '../src/view/film-details-pop-up.js';
 import FilmComment from '../src/view/film-comment-view.js';
 import CommentsModel from '../src/model/comments-model.js';
@@ -13,46 +13,54 @@ export default class FilmDetailPresenter {
 
     this.#siteBodyElement = document.querySelector('body');
     this.#filmData = filmData;
+    this.#filmDetailElement = new FilmDetailsPopUp(filmData);
 
-    this.#renderDetailPopUp(filmData);
+    this.#renderDetailPopUp();
     this.#renderComments(this.#filmCommentModel.comments);
+
   };
 
-  #renderDetailPopUp (filmData) {
+  #renderDetailPopUp () {
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        this.#removeDatailPopUp(this.#filmDetailElement.element);
+        this.#destroy();
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    this.#filmDetailElement = new FilmDetailsPopUp(filmData);
     this.#siteBodyElement.classList.add('hide-overflow');
 
     render(this.#filmDetailElement,  this.#siteBodyElement);
 
     this.#filmDetailElement.setCloseClickHandler(() => {
-      this.#removeDatailPopUp();
+      this.#destroy();
       document.removeEventListener('keydown', onEscKeyDown);
     });
+    this.#filmDetailElement.setChangeControlHandler(this.#updateFilmData);
 
     document.addEventListener('keydown', onEscKeyDown);
   }
 
-  #removeDatailPopUp = () => {
-    this.#siteBodyElement.removeChild(this.#filmDetailElement.element);
+  #destroy = () => {
+    // this.#siteBodyElement.removeChild(this.#filmDetailElement.element);
+    remove(this.#filmDetailElement)
     this.#siteBodyElement.classList.remove('hide-overflow');
 
   }
 
   #renderComments (comments) {
     //Находим в отрисованном элементе контейнер для комментариев
-    const commentContainer = this.#siteBodyElement.querySelector('.film-details__comments-list');
-
     for(let comment of  comments) {
-      render(new FilmComment(comment), commentContainer)
+      render(new FilmComment(comment), this.#filmDetailElement.commentContainer)
     }
   }
+
+  #updateFilmData = (target) => {
+    this.#filmData.user_details[target] = !this.#filmData.user_details[target];
+  }
+
+
+
 }

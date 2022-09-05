@@ -152,6 +152,10 @@ export default class FilmDetailsPopUp extends AbstractView {
     return createPopUpTemplate(this.#film);
   }
 
+  get commentContainer() {
+    return this.element.querySelector('.film-details__comments-list');
+  }
+
   setCloseClickHandler = (callback) => {
     // Мы могли бы сразу передать callback в addEventListener,
     // но тогда бы для удаления обработчика в будущем,
@@ -168,6 +172,32 @@ export default class FilmDetailsPopUp extends AbstractView {
     evt.preventDefault();
     // 3. А внутри абстрактного обработчика вызовем колбэк
     this._callback.closeClick();
+  };
+
+  setChangeControlHandler = (callback) => {
+
+    this._callback.changeControl = callback;
+
+    this.element.querySelectorAll('.film-details__controls button').forEach(button => button.addEventListener('click', this.#changeControlHandler))
+  };
+
+  #changeControlHandler = (evt) => {
+    evt.preventDefault();
+
+    if ( evt.target.id === 'watchlist') {
+      this._callback.changeControl('watchlist');
+      evt.target.classList.toggle('film-details__control-button--active');
+    }
+
+    if ( evt.target.id === 'watched') {
+      this._callback.changeControl('already_watched');
+      evt.target.classList.toggle('film-details__control-button--active');
+    }
+
+    if ( evt.target.id === 'favorite') {
+      this._callback.changeControl('favorite');
+      evt.target.classList.toggle('film-details__control-button--active')
+    }
   };
 
 }

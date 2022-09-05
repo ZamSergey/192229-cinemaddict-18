@@ -2,29 +2,29 @@ import FilmListContainer from '../src/view/film-list-container.js';
 import FilmCard from '../src/view/film-card.js';
 import {render, replace, remove} from '../src/framework/render.js';
 import FilmDetailPresenter from './film-detail-presenter';
+import {getRandomInteger} from '../src/utils/common';
+import {FILMS} from '../src/mock/const';
 
 
 export default class FilmPresenter {
 
-  #filmDetailPresenter = new FilmDetailPresenter();
-  #filmListContainerComponent = new FilmListContainer();
+  #filmDetailPresenter = null;
   #filmComponent = null;
-
-
   #filmMainContainer = null;
   #filmData = null;
-
-  #filmBodyContainer = null;
 
   constructor(filmMainContainer ) {
     this.#filmMainContainer = filmMainContainer;
   }
 
-  init = (filmData) => {
+  init = (filmData, filmDetailPresenter) => {
 
+    this.#filmDetailPresenter = filmDetailPresenter;
     this.#filmData = filmData;
+
     const prevFilmComponent = this.#filmComponent;
 
+    this.#filmComponent = new FilmCard(filmData);
 
     if (prevFilmComponent === null) {
       this.#renderFilm(filmData);
@@ -38,22 +38,33 @@ export default class FilmPresenter {
     remove(prevFilmComponent);
   };
 
-  #renderFilm = (filmData) => {
-    this.#filmComponent = new FilmCard(filmData);
-
+  #renderFilm = () => {
     render(this.#filmComponent,  this.#filmMainContainer);
-    this.#setFilmClickHandler();
+    this.#setFilmClickHandler(this.#showDetailFilm);
+    this.#setChangeControlHandler(this.#updateFilmData);
   };
 
-  #showDetailFilm = (filmData) => {
-    this.#filmDetailPresenter.init(filmData);
-  };
-
-  #setFilmClickHandler = () => {
+  #setFilmClickHandler = (clickHandler) => {
     //Установка обработчика клика по фильму и показ подробной информации
-    this.#filmComponent.element.querySelector('.film-card__link').addEventListener('click', () => {
-      this.#showDetailFilm(this.#filmData);
-    });
+    this.#filmComponent.setClickHandler(clickHandler);
+  }
+
+  #showDetailFilm = () => {
+    this.#filmDetailPresenter.init(this.#filmData);
+
+  };
+
+  #setChangeControlHandler = (clickHandler) => {
+    //Установка обработчика клика по фильму и показ подробной информации
+    this.#filmComponent.setChangeControlHandler(clickHandler);
+  }
+
+  #updateFilmData = (target) => {
+    this.#filmData.user_details[target] = !this.#filmData.user_details[target];
+  };
+
+  destroy = () => {
+    remove(this.#filmComponent);
   }
 
 }

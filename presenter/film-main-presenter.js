@@ -16,6 +16,9 @@ const FILM_COUNT_PER_STEP = 5;
 
 export default class FilmMainPresenter {
 
+  #filmDetailPresenter = new FilmDetailPresenter();
+  #filmPresenter = new Map();
+
   #filmComponent = new FilmContainer();
   #filmListComponent = new FilmList();
   #filmListContainerComponent = new FilmListContainer();
@@ -42,6 +45,7 @@ export default class FilmMainPresenter {
     //Навигация(Филтры)
     const filterData = generateFilter(this.#filmsList);
 
+
     this.#filmFilterComponent = new Filter(filterData);
 
 
@@ -57,9 +61,9 @@ export default class FilmMainPresenter {
   };
 
   #renderFilm = (filmData) => {
-
     const film = new FilmPresenter(this.#filmListContainerComponent.element);
-    film.init(filmData);
+    film.init(filmData, this.#filmDetailPresenter);
+    this.#filmPresenter.set(filmData.id, film);
   }
 
   #renderFilmList = () => {
@@ -73,7 +77,6 @@ export default class FilmMainPresenter {
     for (let i = 0; i < Math.min(this.#filmsList.length, FILM_COUNT_PER_STEP); i++) {
       this.#renderFilm(this.#filmsList[i]);
     }
-
 
     if (this.#filmsList.length > FILM_COUNT_PER_STEP) {
       this.#renderButtonShowMore();
