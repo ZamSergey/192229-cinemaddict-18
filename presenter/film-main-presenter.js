@@ -3,14 +3,14 @@ import FilmList from '../src/view/film-list.js';
 import ButtonShowMore from '../src/view/button-show-more.js';
 import FilmListEmpty from '../src/view/list-empty-view';
 import FilmContainer from '../src/view/film-container.js';
-import FilmCard from '../src/view/film-card.js';
-import {render} from '../src/framework/render.js';
+import {render, remove} from '../src/framework/render.js';
 import Filter from '../src/view/filters';
 import Sort from '../src/view/sort';
 import FilmDetailPresenter from './film-detail-presenter';
 import FilmPresenter from './film-presenter';
 import FilmDetailModel from "../src/model/films-detail-model";
-import {generateFilter} from '../src/mock/filter'
+import {generateFilter} from '../src/mock/filter';
+import {updateItem} from '../src/utils/common';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -61,7 +61,7 @@ export default class FilmMainPresenter {
   };
 
   #renderFilm = (filmData) => {
-    const film = new FilmPresenter(this.#filmListContainerComponent.element);
+    const film = new FilmPresenter(this.#filmListContainerComponent.element, this.#handleFilmChange);
     film.init(filmData, this.#filmDetailPresenter);
     this.#filmPresenter.set(filmData.id, film);
   }
@@ -83,6 +83,18 @@ export default class FilmMainPresenter {
       this.#buttonShowMoreComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
     }
   }
+
+  #clearFilmList = () => {
+    this.#filmPresenter.forEach((film) => {film.destroy()});
+    this.#filmPresenter.clear();
+    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    remove(this.#buttonShowMoreComponent)
+  }
+
+  #handleFilmChange = (updatedFilm) => {
+    this.#filmsList = updateItem(this.#filmsList, updatedFilm);
+    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
+  };
 
   #renderButtonShowMore = () => {
     this.#buttonShowMoreComponent = new ButtonShowMore();

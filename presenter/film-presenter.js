@@ -12,15 +12,18 @@ export default class FilmPresenter {
   #filmComponent = null;
   #filmMainContainer = null;
   #filmData = null;
+  #changFilmData = null;
 
-  constructor(filmMainContainer ) {
+  constructor(filmMainContainer, filmChangeData ) {
     this.#filmMainContainer = filmMainContainer;
+    this.#changFilmData = filmChangeData;
   }
 
   init = (filmData, filmDetailPresenter) => {
 
     this.#filmDetailPresenter = filmDetailPresenter;
     this.#filmData = filmData;
+
 
     const prevFilmComponent = this.#filmComponent;
 
@@ -61,6 +64,7 @@ export default class FilmPresenter {
 
   #updateFilmData = (target) => {
     this.#filmData.user_details[target] = !this.#filmData.user_details[target];
+    this.#changFilmData(this.#filmData);
   };
 
   destroy = () => {

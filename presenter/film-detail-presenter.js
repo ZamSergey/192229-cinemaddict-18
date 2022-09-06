@@ -2,21 +2,24 @@ import {render, remove} from '../src/framework/render.js';
 import FilmDetailsPopUp from '../src/view/film-details-pop-up.js';
 import FilmComment from '../src/view/film-comment-view.js';
 import CommentsModel from '../src/model/comments-model.js';
+import {replace} from "../src/framework/render";
 
 export default class FilmDetailPresenter {
   #siteBodyElement = null;
   #filmData = null;
-  #filmDetailElement = null;
+  #filmDetailComponent = null;
   #filmCommentModel = new CommentsModel();
 
   init = (filmData) => {
 
     this.#siteBodyElement = document.querySelector('body');
     this.#filmData = filmData;
-    this.#filmDetailElement = new FilmDetailsPopUp(filmData);
 
-    this.#renderDetailPopUp();
-    this.#renderComments(this.#filmCommentModel.comments);
+    this.#filmDetailComponent = new FilmDetailsPopUp(filmData);
+
+
+      this.#renderDetailPopUp();
+      this.#renderComments(this.#filmCommentModel.comments);
 
   };
 
@@ -32,20 +35,21 @@ export default class FilmDetailPresenter {
 
     this.#siteBodyElement.classList.add('hide-overflow');
 
-    render(this.#filmDetailElement,  this.#siteBodyElement);
+    render(this.#filmDetailComponent,  this.#siteBodyElement);
 
-    this.#filmDetailElement.setCloseClickHandler(() => {
+    this.#filmDetailComponent.setCloseClickHandler(() => {
       this.#destroy();
       document.removeEventListener('keydown', onEscKeyDown);
     });
-    this.#filmDetailElement.setChangeControlHandler(this.#updateFilmData);
+
+    this.#filmDetailComponent.setChangeControlHandler(this.#updateFilmData);
 
     document.addEventListener('keydown', onEscKeyDown);
   }
 
   #destroy = () => {
-    // this.#siteBodyElement.removeChild(this.#filmDetailElement.element);
-    remove(this.#filmDetailElement)
+    // this.#siteBodyElement.removeChild(this.#filmDetailComponent.element);
+    remove(this.#filmDetailComponent)
     this.#siteBodyElement.classList.remove('hide-overflow');
 
   }
@@ -53,7 +57,7 @@ export default class FilmDetailPresenter {
   #renderComments (comments) {
     //Находим в отрисованном элементе контейнер для комментариев
     for(let comment of  comments) {
-      render(new FilmComment(comment), this.#filmDetailElement.commentContainer)
+      render(new FilmComment(comment), this.#filmDetailComponent.commentContainer)
     }
   }
 
