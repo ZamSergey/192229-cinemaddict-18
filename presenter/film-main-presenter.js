@@ -11,12 +11,14 @@ import FilmPresenter from './film-presenter';
 import FilmDetailModel from "../src/model/films-detail-model";
 import {generateFilter} from '../src/mock/filter';
 import {updateItem} from '../src/utils/common';
+import {sortFilmsByDate, sortFilmByRating} from '../src/utils/date.js';
+import {SortType} from '../src/mock/const.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
 export default class FilmMainPresenter {
 
-  #filmDetailPresenter = new FilmDetailPresenter();
+  #filmDetailPresenter = null;
   #filmPresenter = new Map();
 
   #filmComponent = new FilmContainer();
@@ -29,25 +31,31 @@ export default class FilmMainPresenter {
   #filmMainContainer = null;
   #filmsModel = null;
   #filmsList = [];
+  #sourcedFilmsList = [];
+
   #filmBodyContainer = null;
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+
+  #currentSortType = SortType.DEFAULT;
+
 
   constructor(filmMainContainer, filmsModel) {
     this.#filmBodyContainer = filmMainContainer;
     this.#filmMainContainer = filmMainContainer.querySelector('.main');
     this.#filmsModel = filmsModel;
+    this.#filmDetailPresenter = new FilmDetailPresenter(this.#handleFilmUpdate)
   }
 
   init = () => {
     //Получаем данные о фильмах
-    this.#filmsList = [... this.#filmsModel.films];
+    this.#filmsList = [...this.#filmsModel.films];
+    this.#sourcedFilmsList = [...this.#filmsModel.films];
 
+console.log(this.#filmsList)
     //Навигация(Филтры)
     const filterData = generateFilter(this.#filmsList);
 
-
     this.#filmFilterComponent = new Filter(filterData);
-
 
     render(this.#filmFilterComponent, this.#filmMainContainer);
 
@@ -61,13 +69,16 @@ export default class FilmMainPresenter {
   };
 
   #renderFilm = (filmData) => {
-    const film = new FilmPresenter(this.#filmListContainerComponent.element, this.#handleFilmChange);
-    film.init(filmData, this.#filmDetailPresenter);
+    const film = new FilmPresenter(this.#filmListContainerComponent.element, this.#handleFilmUpdate, this.#showFilmDetail, this.#hideFilmDetail);
+
+    film.init(filmData);
     this.#filmPresenter.set(filmData.id, film);
   }
 
   #renderFilmList = () => {
     render(this.#filmSortComponent, this.#filmMainContainer);
+    this.#filmSortComponent.setSortClickHandler(this.#handleSortClick);
+
     render(this.#filmComponent, this.#filmMainContainer);
     render(this.#filmListComponent,this.#filmComponent.element);
     render(this.#filmListContainerComponent,this.#filmListComponent.element);
@@ -84,6 +95,16 @@ export default class FilmMainPresenter {
     }
   }
 
+  #showFilmDetail = (filmData) => {
+    this.#filmDetailPresenter.closeFilmDetail();
+    this.#filmDetailPresenter.init(filmData);
+  }
+
+  #hideFilmDetail = () => {
+    this.#filmDetailPresenter.closeFilmDetail();
+  }
+
+
   #clearFilmList = () => {
     this.#filmPresenter.forEach((film) => {film.destroy()});
     this.#filmPresenter.clear();
@@ -91,9 +112,31 @@ export default class FilmMainPresenter {
     remove(this.#buttonShowMoreComponent)
   }
 
-  #handleFilmChange = (updatedFilm) => {
+  #handleFilmUpdate = (updatedFilm) => {
     this.#filmsList = updateItem(this.#filmsList, updatedFilm);
+    this.#sourcedFilmsList = updateItem(this.#sourcedFilmsList, updatedFilm);
+
     this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
+  };
+
+  #sortFilms = (sortType) => {
+    // 2. Этот исходный массив задач необходим,
+    // потому что для сортировки мы будем мутировать
+    // массив в свойстве _filmsList
+    switch (sortType) {
+      case SortType.DATE:
+        this.#filmsList.sort(sortFilmsByDate);
+        break;
+      case SortType.RATING:
+        this.#filmsList.sort(sortFilmByRating);
+        break;
+      default:
+        // 3. А когда пользователь захочет "вернуть всё, как было",
+        // мы просто запишем в _boardTasks исходный массив
+        this.#filmsList = [...this.#sourcedFilmsList];
+    }
+
+    this.#currentSortType = sortType;
   };
 
   #renderButtonShowMore = () => {
@@ -106,6 +149,19 @@ export default class FilmMainPresenter {
     render(this.#filmListComponent,this.#filmComponent.element);
     render(new FilmListEmpty(), this.#filmListComponent.element);
   }
+
+  #handleSortClick = (sortType) => {
+    console.log(sortType);
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortFilms(sortType);
+    this.#clearFilmList();
+    this.#renderFilmList();
+  }
+
+
 
   #handleLoadMoreButtonClick = (evt) => {
     evt.preventDefault();

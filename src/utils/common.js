@@ -7,6 +7,12 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+const random = (a = 1, b = 0) => {
+  const lower = Math.min(a, b);
+  const upper = Math.max(a, b);
+  return lower + Math.random() * (upper - lower);
+};
+
 const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
@@ -21,4 +27,4 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {getRandomInteger, updateItem};
+export {getRandomInteger, updateItem, random};

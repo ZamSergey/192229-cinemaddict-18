@@ -12,7 +12,8 @@ const createFilmCardTemplate = (filmsData) => {
   const alternativeTitle = filmInfo.alternative_title;
   const filmDuration = filmRuntime(runtime);
 
-  const year = humanizeFilmDate(release.date);
+  const year = humanizeFilmDate(release.date) === 1970 ? humanizeFilmDate(release.date) : release.date;
+
 
   return `<article class="film-card">
           <a class="film-card__link">
@@ -88,7 +89,7 @@ export default class FilmCard extends AbstractView {
 
     if (buttonClassList.contains('film-card__controls-item--favorite')) {
       this._callback.changeControl('favorite');
-      evt.target.classList.toggle('film-card__controls-item--active')
+      evt.target.classList.toggle('film-card__controls-item--active');
     }
   };
 }

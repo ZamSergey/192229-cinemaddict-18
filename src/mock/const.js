@@ -7,4 +7,10 @@ const FilterType = {
   FAVORITES: 'favorites'
 };
 
-export {EMOTYON, FilterType, FILMS};
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
+export {EMOTYON, FilterType, FILMS, SortType};

@@ -1,57 +1,63 @@
 import {render, remove} from '../src/framework/render.js';
-import FilmDetailsPopUp from '../src/view/film-details-pop-up.js';
+import FilmDetailsComponent from '../src/view/film-details-component.js';
 import FilmComment from '../src/view/film-comment-view.js';
 import CommentsModel from '../src/model/comments-model.js';
-import {replace} from "../src/framework/render";
+const cloneDeep = require('lodash.clonedeep');
 
 export default class FilmDetailPresenter {
   #siteBodyElement = null;
   #filmData = null;
   #filmDetailComponent = null;
   #filmCommentModel = new CommentsModel();
+  #filmUpdateHandler = null;
+
+  #isOpen = false;
+
+
+  constructor(filmUpdateHandler) {
+    this.#filmUpdateHandler = filmUpdateHandler;
+  }
 
   init = (filmData) => {
 
     this.#siteBodyElement = document.querySelector('body');
-    this.#filmData = filmData;
+    this.#filmData = cloneDeep(filmData);
 
-    this.#filmDetailComponent = new FilmDetailsPopUp(filmData);
+    this.#filmDetailComponent = new FilmDetailsComponent(filmData);
 
 
-      this.#renderDetailPopUp();
+      this.#renderFilmDetail();
       this.#renderComments(this.#filmCommentModel.comments);
 
   };
 
-  #renderDetailPopUp () {
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        this.#destroy();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
+  #renderFilmDetail () {
+    this.#isOpen = true;
     this.#siteBodyElement.classList.add('hide-overflow');
 
     render(this.#filmDetailComponent,  this.#siteBodyElement);
 
-    this.#filmDetailComponent.setCloseClickHandler(() => {
-      this.#destroy();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
+    this.#filmDetailComponent.setCloseClickHandler(this.#closeClickHandler);
 
-    this.#filmDetailComponent.setChangeControlHandler(this.#updateFilmData);
+    this.#filmDetailComponent.setChangeControlHandler(this.#updateFilmDataHandler);
 
-    document.addEventListener('keydown', onEscKeyDown);
+    document.addEventListener('keydown', this.#onEscKeyDown);
   }
 
+
   #destroy = () => {
-    // this.#siteBodyElement.removeChild(this.#filmDetailComponent.element);
     remove(this.#filmDetailComponent)
     this.#siteBodyElement.classList.remove('hide-overflow');
+    this.#filmUpdateHandler(this.#filmData);
 
+  }
+
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#destroy();
+      document.removeEventListener('keydown', this.#onEscKeyDown);
+    }
   }
 
   #renderComments (comments) {
@@ -61,10 +67,19 @@ export default class FilmDetailPresenter {
     }
   }
 
-  #updateFilmData = (target) => {
-    this.#filmData.user_details[target] = !this.#filmData.user_details[target];
+  #closeClickHandler = () => {
+    this.#destroy();
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+  }
+  //Публичный метод для закрытия
+  closeFilmDetail = () => {
+    if(this.#isOpen) {
+      this.#isOpen = false;
+      this.#closeClickHandler();
+    }
   }
 
-
-
+  #updateFilmDataHandler = (target) => {
+    this.#filmData.user_details[target] = !this.#filmData.user_details[target];
+  }
 }
