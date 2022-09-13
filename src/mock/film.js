@@ -1,14 +1,19 @@
-export const generateFilm = () => (
-  {
-    'id': '0',
+import {nanoid} from 'nanoid';
+import {getRandomInteger} from '../utils/common';
+import {FILMS} from './const';
+
+export const generateFilm = () => {
+  const randomImg = `images/posters/${FILMS[getRandomInteger(0,FILMS.length - 1)]}`;
+  return {
+    'id': nanoid(),
     'comments': [
       1, 2, 3
     ],
     'film_info': {
       'title': 'A Little Pony Without The Carpet',
       'alternative_title': 'Laziness Who Sold Themselves',
-      'total_rating': 5.3,
-      'poster': 'images/posters/made-for-each-other.png',
+      'total_rating': getRandomInteger(0, 10) / 10,
+      'poster': randomImg,
       'age_rating': 0,
       'director': 'Tom Ford',
       'writers': [
@@ -18,7 +23,7 @@ export const generateFilm = () => (
         'Morgan Freeman'
       ],
       'release': {
-        'date': '2019-05-11T00:00:00.000Z',
+        'date': getRandomInteger(1987,1999),
         'release_country': 'Finland'
       },
       'runtime': 77,
@@ -31,7 +36,7 @@ export const generateFilm = () => (
       'watchlist': true,
       'already_watched': true,
       'watching_date': '2019-04-12T16:12:32.554Z',
-      'favorite': false
+      'favorite': true
     }
-  });
-
+  };
+};

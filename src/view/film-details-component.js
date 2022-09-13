@@ -139,7 +139,7 @@ const createPopUpTemplate = (film) => {
 };
 
 
-export default class FilmDetailsPopUp extends AbstractView {
+export default class FilmDetailsComponent extends AbstractView {
   #film = null;
   #eventListener = null;
 
@@ -152,22 +152,44 @@ export default class FilmDetailsPopUp extends AbstractView {
     return createPopUpTemplate(this.#film);
   }
 
-  setCloseClickHandler = (callback) => {
-    // Мы могли бы сразу передать callback в addEventListener,
-    // но тогда бы для удаления обработчика в будущем,
-    // нам нужно было бы производить это снаружи, где-то там,
-    // где мы вызывали setClickHandler, что не всегда удобно
+  get commentContainer() {
+    return this.element.querySelector('.film-details__comments-list');
+  }
 
-    // 1. Поэтому колбэк мы запишем во внутреннее свойство
+  setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
-    // 2. В addEventListener передадим абстрактный обработчик
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
   };
 
   #closeClickHandler = (evt) => {
     evt.preventDefault();
-    // 3. А внутри абстрактного обработчика вызовем колбэк
     this._callback.closeClick();
+  };
+
+  setChangeControlHandler = (callback) => {
+
+    this._callback.changeControl = callback;
+
+    this.element.querySelectorAll('.film-details__controls button').forEach((button) => button.addEventListener('click', this.#changeControlHandler));
+  };
+
+  #changeControlHandler = (evt) => {
+    evt.preventDefault();
+
+    if ( evt.target.id === 'watchlist') {
+      this._callback.changeControl('watchlist');
+      evt.target.classList.toggle('film-details__control-button--active');
+    }
+
+    if ( evt.target.id === 'watched') {
+      this._callback.changeControl('already_watched');
+      evt.target.classList.toggle('film-details__control-button--active');
+    }
+
+    if ( evt.target.id === 'favorite') {
+      this._callback.changeControl('favorite');
+      evt.target.classList.toggle('film-details__control-button--active');
+    }
   };
 
 }
