@@ -34,7 +34,6 @@ export default class Sort extends AbstractView {
       this._callback.sortClick( evt.target.dataset.sort);
       this.#switchActiveSort(evt.target);
     }
-
   };
 
   #switchActiveSort = (activeElement) => {
