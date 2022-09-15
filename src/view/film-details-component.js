@@ -1,5 +1,8 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humanizeFilmDate, filmRuntime} from '../utils/date.js';
+import {EMOTYON} from '../mock/const.js';
+import {render} from "../framework/render";
+
 
 const setGenre = (genre) => {
 
@@ -10,6 +13,20 @@ const setGenre = (genre) => {
 
   return genreList;
 };
+
+const getEmotionIcon = () => {
+  const form = document.querySelector('.film-details__new-comment').elements['comment-emoji'].forEach((button) => button.addEventListener('click', (evt)=>{console.log(evt.target.value)}) )
+
+}
+const setEmotionImg = (emotion) => {
+  const emotionPlace = document.querySelector('.film-details__add-emoji-label')
+}
+
+const emotionTemplate = (emotion) => {
+  ` <span class="film-details__comment-emoji">
+  <img src="${EMOTYON[emotion]}" width="55" height="55" alt="emoji-${emotion}}">
+  </span>`
+}
 
 const createPopUpTemplate = (film) => {
 
@@ -139,17 +156,27 @@ const createPopUpTemplate = (film) => {
 };
 
 
-export default class FilmDetailsComponent extends AbstractView {
-  #film = null;
-  #eventListener = null;
+export default class FilmDetailsComponent extends AbstractStatefulView {
+
+  #isOpen = false;
 
   constructor(film) {
     super();
-    this.#film = film;
+
+    this._state = FilmDetailsComponent.parseFilmToState(film);
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createPopUpTemplate(this.#film);
+    return createPopUpTemplate(this._state);
+  }
+  //Пытаюсь ставить таким образом флаг что окно открыто, но перестает работать попап
+  get isOpen() {
+    return this.#isOpen;
+  }
+
+  set isOpen(state) {
+    this.#isOpen = state;
   }
 
   get commentContainer() {
@@ -171,6 +198,7 @@ export default class FilmDetailsComponent extends AbstractView {
     this._callback.changeControl = callback;
 
     this.element.querySelectorAll('.film-details__controls button').forEach((button) => button.addEventListener('click', this.#changeControlHandler));
+
   };
 
   #changeControlHandler = (evt) => {
@@ -190,6 +218,74 @@ export default class FilmDetailsComponent extends AbstractView {
       this._callback.changeControl('favorite');
       evt.target.classList.toggle('film-details__control-button--active');
     }
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-details__new-comment').elements['comment-emoji'].forEach((button) => button.addEventListener('click', this.#changeEmotionHandler));
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#feedbackTextHandler);
+  }
+
+  #feedbackTextHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      feedbackText: evt.target.value,
+    });
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setCloseClickHandler(this._callback.closeClick);
+    this.setChangeControlHandler(this._callback.changeControl);
+
+  };
+
+  #changeEmotionHandler = (evt) => {
+    evt.preventDefault();
+
+    if(evt.target.value === this._state.emoji) {
+      this.updateElement({
+        emoji: '',
+        emojiTemplate: '',
+      });
+    }
+    else {
+      this.updateElement({
+        emoji: evt.target.value,
+        emojiTemplate:  `<img src="${EMOTYON[evt.target.value]}" width="100%" height="100%" alt="emoji-${evt.target.value}}">`,
+      });
+      this.#checkEmojiImage();
+      this.#checkFeedbackText()
+    }
+
+  };
+
+  #checkEmojiImage = () => {
+    const emijiContainer = this.element.querySelector('.film-details__add-emoji-label');
+    emijiContainer.insertAdjacentHTML('afterbegin',this._state.emojiTemplate );
+    this.element.scroll(0, this.element.getBoundingClientRect().height)
+
+  };
+
+  #checkFeedbackText = () => {
+    if(this._state.feedbackText) {
+      this.element.querySelector('.film-details__comment-input').value = this._state.feedbackText;
+    }
+  };
+
+  static parseFilmToState = (film) => ({...film,
+    emoji: '',
+    feedbackText: '',
+    emojiTemplate: ''
+  });
+
+  static parseStateToFilm = (state) => {
+    const film = {...state};
+
+    delete film.emoji;
+    delete film.feedbackText;
+    delete film.emojiTemplate;
+
+    return film;
   };
 
 }

@@ -73,10 +73,12 @@ export default class FilmDetailPresenter {
   }
   //Публичный метод для закрытия
   closeFilmDetail = () => {
+
     if(this.#isOpen) {
       this.#isOpen = false;
       this.#closeClickHandler();
     }
+    // this.#closeClickHandler();
   }
 
   #updateFilmDataHandler = (target) => {
