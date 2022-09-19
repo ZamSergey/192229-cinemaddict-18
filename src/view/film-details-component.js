@@ -1,7 +1,31 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {humanizeFilmDate, filmRuntime} from '../utils/date.js';
 import {EMOTYON} from '../mock/const.js';
-import {render} from "../framework/render";
+import {getCommentDate} from '../utils/date.js';
+import CommentsModel from '../model/comments-model';
+
+const filmCommentModel = new CommentsModel();
+const filmsCommentData = filmCommentModel.comments;
+
+const createCommentTemplate = (commentData) => {
+  const {author, comment, date, emotion} = commentData;
+
+  return `<li class="film-details__comment">
+  <span class="film-details__comment-emoji">
+  <img src="${EMOTYON[emotion]}" width="55" height="55" alt="emoji-${emotion}">
+  </span>
+  <div>
+  <p class="film-details__comment-text">${comment}</p>
+<p class="film-details__comment-info">
+  <span class="film-details__comment-author">${author}</span>
+<span class="film-details__comment-day">${getCommentDate(date)}</span>
+<button class="film-details__comment-delete">Delete</button>
+  </p>
+  </div>
+  </li>`;
+};
+
+const createCommentList = (data) => data.map( (filmComment) => createCommentTemplate(filmComment)).join('');
 
 
 const setGenre = (genre) => {
@@ -13,20 +37,6 @@ const setGenre = (genre) => {
 
   return genreList;
 };
-
-const getEmotionIcon = () => {
-  const form = document.querySelector('.film-details__new-comment').elements['comment-emoji'].forEach((button) => button.addEventListener('click', (evt)=>{console.log(evt.target.value)}) )
-
-}
-const setEmotionImg = (emotion) => {
-  const emotionPlace = document.querySelector('.film-details__add-emoji-label')
-}
-
-const emotionTemplate = (emotion) => {
-  ` <span class="film-details__comment-emoji">
-  <img src="${EMOTYON[emotion]}" width="55" height="55" alt="emoji-${emotion}}">
-  </span>`
-}
 
 const createPopUpTemplate = (film) => {
 
@@ -117,7 +127,7 @@ const createPopUpTemplate = (film) => {
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentCounter}</span></h3>
 
         <ul class="film-details__comments-list">
-
+            ${createCommentList(filmsCommentData)}
         </ul>
 
         <form class="film-details__new-comment" action="" method="get">
@@ -155,28 +165,16 @@ const createPopUpTemplate = (film) => {
 </section>`;
 };
 
-
 export default class FilmDetailsComponent extends AbstractStatefulView {
-
-  #isOpen = false;
 
   constructor(film) {
     super();
-
     this._state = FilmDetailsComponent.parseFilmToState(film);
     this.#setInnerHandlers();
   }
 
   get template() {
     return createPopUpTemplate(this._state);
-  }
-  //Пытаюсь ставить таким образом флаг что окно открыто, но перестает работать попап
-  get isOpen() {
-    return this.#isOpen;
-  }
-
-  set isOpen(state) {
-    this.#isOpen = state;
   }
 
   get commentContainer() {
@@ -223,13 +221,34 @@ export default class FilmDetailsComponent extends AbstractStatefulView {
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__new-comment').elements['comment-emoji'].forEach((button) => button.addEventListener('click', this.#changeEmotionHandler));
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#feedbackTextHandler);
-  }
+    this.element.querySelectorAll('.film-details__comment-delete').forEach((button) => button.addEventListener('click', this.#deleteComment));
+  };
+
+  #changeEmotionHandler = (evt) => {
+    evt.preventDefault();
+
+    if(evt.target.value !== this._state.emoji) {
+      this.updateElement({
+        emoji: evt.target.value,
+        emojiTemplate: `<img src="${EMOTYON[evt.target.value]}" width="100%" height="100%" alt="emoji-${evt.target.value}">`,
+      });
+      this.#setEmojiInput();
+      this.#setFeedbackText();
+    }
+  };
 
   #feedbackTextHandler = (evt) => {
     evt.preventDefault();
     this._setState({
       feedbackText: evt.target.value,
     });
+  };
+
+  #deleteComment = (evt) => {
+    // Удаление Html
+    evt.target.closest('.film-details__comment').remove();
+    // Изменить данные
+    // Перерисовать комментарии или все окно(что проще)
   };
 
   _restoreHandlers = () => {
@@ -239,34 +258,18 @@ export default class FilmDetailsComponent extends AbstractStatefulView {
 
   };
 
-  #changeEmotionHandler = (evt) => {
-    evt.preventDefault();
-
-    if(evt.target.value === this._state.emoji) {
-      this.updateElement({
-        emoji: '',
-        emojiTemplate: '',
-      });
-    }
-    else {
-      this.updateElement({
-        emoji: evt.target.value,
-        emojiTemplate:  `<img src="${EMOTYON[evt.target.value]}" width="100%" height="100%" alt="emoji-${evt.target.value}}">`,
-      });
-      this.#checkEmojiImage();
-      this.#checkFeedbackText()
-    }
-
-  };
-
-  #checkEmojiImage = () => {
+  #setEmojiInput = () => {
     const emijiContainer = this.element.querySelector('.film-details__add-emoji-label');
-    emijiContainer.insertAdjacentHTML('afterbegin',this._state.emojiTemplate );
-    this.element.scroll(0, this.element.getBoundingClientRect().height)
+    emijiContainer.insertAdjacentHTML('afterbegin', this._state.emojiTemplate);
+    if(!this.element.querySelector(`#emoji-${this._state.emoji}`).checked) {
+      this.element.querySelector(`#emoji-${this._state.emoji}`).checked = true;
+    }
+
+    this.element.scroll(0, this.element.getBoundingClientRect().height);
 
   };
 
-  #checkFeedbackText = () => {
+  #setFeedbackText = () => {
     if(this._state.feedbackText) {
       this.element.querySelector('.film-details__comment-input').value = this._state.feedbackText;
     }
@@ -288,6 +291,10 @@ export default class FilmDetailsComponent extends AbstractStatefulView {
     return film;
   };
 
+  reset = (film) => {
+    this.updateElement(
+      FilmDetailsComponent.parseStateToFilm(film),
+    );
+  };
+
 }
-
-

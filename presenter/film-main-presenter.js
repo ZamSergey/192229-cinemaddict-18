@@ -51,7 +51,7 @@ export default class FilmMainPresenter {
     this.#filmsList = [...this.#filmsModel.films];
     this.#sourcedFilmsList = [...this.#filmsModel.films];
 
-console.log(this.#filmsList)
+
     //Навигация(Филтры)
     const filterData = generateFilter(this.#filmsList);
 
@@ -69,8 +69,9 @@ console.log(this.#filmsList)
   };
 
   #renderFilm = (filmData) => {
+    console.log("Исходные данные",  this.#filmsList);
+    // console.log("Исходные данные оригинал",  this.#sourcedFilmsList);
     const film = new FilmPresenter(this.#filmListContainerComponent.element, this.#handleFilmUpdate, this.#showFilmDetail, this.#hideFilmDetail);
-
     film.init(filmData);
     this.#filmPresenter.set(filmData.id, film);
   }
@@ -109,7 +110,7 @@ console.log(this.#filmsList)
     this.#filmPresenter.forEach((film) => {film.destroy()});
     this.#filmPresenter.clear();
     this.#renderedFilmCount = FILM_COUNT_PER_STEP;
-    remove(this.#buttonShowMoreComponent)
+    remove(this.#buttonShowMoreComponent);
   }
 
   #handleFilmUpdate = (updatedFilm) => {
@@ -151,7 +152,6 @@ console.log(this.#filmsList)
   }
 
   #handleSortClick = (sortType) => {
-    console.log(sortType);
     if (this.#currentSortType === sortType) {
       return;
     }
@@ -160,8 +160,6 @@ console.log(this.#filmsList)
     this.#clearFilmList();
     this.#renderFilmList();
   }
-
-
 
   #handleLoadMoreButtonClick = (evt) => {
     evt.preventDefault();
