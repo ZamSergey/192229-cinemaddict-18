@@ -21,7 +21,9 @@ export default class FilmPresenter {
   }
 
   init = (filmData) => {
-    this.#filmData = cloneDeep(filmData);
+    console.log('init data', filmData);
+    // this.#filmData = cloneDeep(filmData);
+    this.#filmData = JSON.parse(JSON.stringify(filmData));
     const prevFilmComponent = this.#filmComponent;
 
     this.#filmComponent = new FilmCard(filmData);
@@ -54,6 +56,7 @@ export default class FilmPresenter {
   //Сделал обертку, поскольку не знал как передать данные о фильме(в this.#setFilmClickHandler нельзя передать параметры обработчика)
   #showFilmDetailWrapper = () => {
     this.#hideFilmDetailHandler();
+    console.log('showFilmDetailWrapper',this.#filmData);
     this.#showFilmDetailHandler(this.#filmData);
   };
 
@@ -66,6 +69,7 @@ export default class FilmPresenter {
 
     this.#filmData.user_details[target] = !this.#filmData.user_details[target];
     this.#changFilmData(this.#filmData);
+    // console.log('updateFilmData',  this.#filmData);
   };
 
   destroy = () => {
