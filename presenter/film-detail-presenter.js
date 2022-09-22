@@ -40,7 +40,7 @@ export default class FilmDetailPresenter {
   #destroy = () => {
     remove(this.#filmDetailComponent)
     this.#siteBodyElement.classList.remove('hide-overflow');
-    this.#filmUpdateHandler(this.#filmData);
+    // this.#filmUpdateHandler(this.#filmData);
     this.#filmDetailComponent.reset(this.#filmData);
 
   }
@@ -67,5 +67,6 @@ export default class FilmDetailPresenter {
 
   #updateFilmDataHandler = (target) => {
     this.#filmData.user_details[target] = !this.#filmData.user_details[target];
+    this.#filmUpdateHandler(this.#filmData);
   }
 }
